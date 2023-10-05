@@ -71,7 +71,10 @@ def add_files_to_replica(source: str, replica: str, logger: Logger):
 
             if not os.path.isdir(replica_folder_path):
                 logger.info(f"Creating folder {replica_folder_path}")
-                os.makedirs(replica_folder_path)
+                try:
+                    os.makedirs(replica_folder_path)
+                except OSError as e:
+                    logger.error(f"Error creating folder {replica_folder_path}: {e}")
 
         for source_file in files:
             source_file_path = os.path.join(cwd, source_file)
@@ -79,7 +82,10 @@ def add_files_to_replica(source: str, replica: str, logger: Logger):
 
             if not os.path.isfile(replica_file_path) or not are_same_files(source_file_path, replica_file_path):
                 logger.info(f"Copying file {source_file_path} to {replica_file_path}")
-                shutil.copy2(source_file_path, replica_file_path)
+                try:
+                    shutil.copy2(source_file_path, replica_file_path)
+                except OSError as e:
+                    logger.error(f"Error copying file {source_file_path} to {replica_file_path}: {e}")
 
 
 def remove_files_from_replica(source: str, replica: str, logger: Logger):
@@ -97,7 +103,10 @@ def remove_files_from_replica(source: str, replica: str, logger: Logger):
 
             if not os.path.isdir(source_folder_path):
                 logger.info(f"Removing folder {replica_folder_path}")
-                shutil.rmtree(replica_folder_path)
+                try:
+                    shutil.rmtree(replica_folder_path)
+                except OSError as e:
+                    logger.error(f"Error removing folder {replica_folder_path}: {e}")
 
         for replica_file in files:
             replica_file_path = os.path.join(cwd, replica_file)
@@ -105,7 +114,10 @@ def remove_files_from_replica(source: str, replica: str, logger: Logger):
 
             if not os.path.isfile(source_file_path):
                 logger.info(f"Removing file {replica_file_path}")
-                os.remove(replica_file_path)
+                try:
+                    os.remove(replica_file_path)
+                except OSError as e:
+                    logger.error(f"Error removing file {replica_file_path}: {e}")
 
 
 def sync_folders(source: str, replica: str, logger: Logger):
